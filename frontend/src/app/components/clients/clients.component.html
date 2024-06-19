@@ -1,0 +1,137 @@
+<div class="container">
+  <h2>Clients</h2>
+  <hr />
+  <form [formGroup]="formSearch" (ngSubmit)="searchBySharedKey()">
+    <input
+      type="text"
+      title="Shared Key To Find"
+      placeholder="Shared Key To Find"
+      class="form-control my-2"
+      formControlName="sharedKey"
+    />
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="formSearch.invalid"
+    >
+      Search By Shared Key
+    </button>
+  </form>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>...</th>
+        <th>Shared Key</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>
+          <button
+            class="btn btn-primary mx-1"
+            title="Add New Client"
+            (click)="openModal(template, undefined)"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let client of clients; let i = index">
+        <td>{{ i + 1 }}.</td>
+        <td>{{ client.sharedKey }}</td>
+        <td>{{ client.name }}</td>
+        <td>{{ client.email }}</td>
+        <td>{{ client.phone }}</td>
+        <td>{{ client.startDate }}</td>
+        <td>{{ client.endDate }}</td>
+        <td>
+          <div>
+            <button
+              class="btn btn-primary mx-1"
+              title="Edit Client"
+              (click)="openModal(template, client)"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              class="btn btn-danger mx-1"
+              title="Delete Client"
+              (click)="deleteClient(client.id)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      {{ form.value.id != null ? "Edit Client" : "Add New Client" }}
+    </h4>
+
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form" (ngSubmit)="handleClient()">
+      <input
+        type="text"
+        title="Shared Key"
+        placeholder="Shared Key"
+        class="form-control my-2"
+        formControlName="sharedKey"
+      />
+      <input
+        type="text"
+        title="Name"
+        placeholder="Name"
+        class="form-control my-2"
+        formControlName="name"
+      />
+      <input
+        type="text"
+        title="Email"
+        placeholder="Email"
+        class="form-control my-2"
+        formControlName="email"
+      />
+      <input
+        type="text"
+        title="Phone"
+        placeholder="Phone"
+        class="form-control my-2"
+        formControlName="phone"
+      />
+      <input
+        type="date"
+        title="Start Date"
+        placeholder="Start Date"
+        class="form-control my-2"
+        formControlName="startDate"
+      />
+      <input
+        type="date"
+        title="End Date"
+        placeholder="End Date"
+        class="form-control my-2"
+        formControlName="endDate"
+      />
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+        {{ form.value.id != null ? "Edit Client" : "Add New Client" }}
+      </button>
+    </form>
+  </div>
+</ng-template>
