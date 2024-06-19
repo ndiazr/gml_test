@@ -3,8 +3,10 @@ package com.gml.clients.service;
 import com.gml.clients.entity.Client;
 import com.gml.clients.exception.ResourceNotFoundException;
 import com.gml.clients.repository.ClientRepository;
+import com.gml.clients.util.CsvGenerator;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,5 +53,9 @@ public class ClientService {
 
     public void delete(Long clientId) {
         repository.deleteById(clientId);
+    }
+
+    public ByteArrayInputStream generateCsv() {
+        return CsvGenerator.clientsToCSV(repository.findAll());
     }
 }
