@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Client } from 'src/app/models/client.model';
 import { ClientService } from 'src/app/services/client.service';
+import { LoggerService } from 'src/app/shared/logger.service';
 
 @Component({
   selector: 'app-clients',
@@ -28,11 +29,27 @@ export class ClientsComponent implements OnInit {
   constructor(
     private clientService: ClientService,
     private modalService: BsModalService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private logger: LoggerService
   ) { }
 
   ngOnInit(): void {
     this.retrieveClients()
+  }
+
+  downloadCSV(): void {
+    this.clientService.downloadCsv()
+      .subscribe((buffer) => {
+        const data: Blob = new Blob([buffer], {
+          type: "text/csv;charset=utf-8"
+        });
+        const url = window.URL.createObjectURL(data);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'exported_data.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
   }
 
   openModal(template: TemplateRef<any>, client?: Client) {
@@ -52,13 +69,19 @@ export class ClientsComponent implements OnInit {
     this.modalRef = this.modalService.show(template);
   }
 
+  clearSearch() {
+    this.formSearch.reset()
+    this.retrieveClients()
+  }
+
   retrieveClients(): void {
+    this.logger.info('Fetching data of clients');
     this.clientService.getAll().subscribe({
       next: (data) => {
         this.clients = data;
-        console.log(data);
+        this.logger.info('Clients data', data);
       },
-      error: (e) => console.error(e)
+      error: (e) => this.logger.error('Error fetching clients', e)
     });
   }
 
@@ -75,13 +98,14 @@ export class ClientsComponent implements OnInit {
           endDate: this.form.value.endDate || '',
         };
 
+        this.logger.info('Updating client', data);
         this.clientService.update(data).subscribe({
           next: (res) => {
-            console.log(res);
+            this.logger.info('Client updated', res);
             this.modalRef?.hide();
             this.retrieveClients()
           },
-          error: (e) => console.error(e)
+          error: (e) => this.logger.error('Error updating client', e)
         });
       }
     } else {
@@ -94,38 +118,40 @@ export class ClientsComponent implements OnInit {
           startDate: this.form.value.startDate || '',
           endDate: this.form.value.endDate || '',
         };
-
+        this.logger.info('Creating client', data);
         this.clientService.create(data).subscribe({
           next: (res) => {
-            console.log(res);
+            this.logger.info('Client created', res);
             this.modalRef?.hide();
             this.retrieveClients()
           },
-          error: (e) => console.error(e)
+          error: (e) => this.logger.error('Error creating client', e)
         });
       }
     }
   }
 
   deleteClient(id?: number) {
-    if(confirm("Are you sure you want to delete this user?")) { 
+    if (confirm("Are you sure you want to delete this user?")) {
+      this.logger.info('Deleting client with id:', { id })
       this.clientService.delete(id).subscribe({
         next: (res) => {
-          console.log(res);
+          this.logger.info('Client deleted correctly')
           this.retrieveClients()
         },
-        error: (e) => console.error(e)
+        error: (e) => this.logger.error('Error deleting client', e)
       });
     }
   }
 
   searchBySharedKey(): void {
+    this.logger.info('Searching clients by sharedKey');
     this.clientService.findBySharedKey(this.formSearch.value.sharedKey!).subscribe({
       next: (data) => {
         this.clients = data;
-        console.log(data);
+        this.logger.info('Clients finded', data);
       },
-      error: (e) => console.error(e)
+      error: (e) => this.logger.error('Error searching clients by sharedKey', e)
     });
   }
 }

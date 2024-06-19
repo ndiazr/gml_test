@@ -1,7 +1,22 @@
 <div class="container">
   <h2>Clients</h2>
   <hr />
-  <form [formGroup]="formSearch" (ngSubmit)="searchBySharedKey()">
+  <button
+    class="btn btn-primary mx-1"
+    title="Add New Client"
+    (click)="openModal(template, undefined)"
+  >
+    <i class="bi bi-plus"></i> New Client
+  </button>
+  <button
+    class="btn btn-secondary mx-1"
+    title="Export"
+    (click)="downloadCSV()"
+  >
+    Export
+  </button>
+  <hr />
+  <form [formGroup]="formSearch">
     <input
       type="text"
       title="Shared Key To Find"
@@ -11,10 +26,17 @@
     />
     <button
       class="btn btn-primary"
-      type="submit"
+      (click)="searchBySharedKey()"
       [disabled]="formSearch.invalid"
     >
       Search By Shared Key
+    </button>
+    <button
+      class="btn btn-secondary mx-1"
+      title="Clear"
+      (click)="clearSearch()"
+    >
+      Clear
     </button>
   </form>
   <table class="table">
@@ -27,15 +49,7 @@
         <th>Phone</th>
         <th>Start Date</th>
         <th>End Date</th>
-        <th>
-          <button
-            class="btn btn-primary mx-1"
-            title="Add New Client"
-            (click)="openModal(template, undefined)"
-          >
-            <i class="bi bi-plus"></i>
-          </button>
-        </th>
+        <th>Options</th>
       </tr>
     </thead>
 

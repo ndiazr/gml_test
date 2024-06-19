@@ -8,13 +8,15 @@ import { HomeComponent } from './components/home/home.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
-import { ReactiveFormsModule } from '@angular/forms'
+import { ReactiveFormsModule } from '@angular/forms';
+import { SideMenuComponent } from './components/side-menu/side-menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ClientsComponent
+    ClientsComponent,
+    SideMenuComponent
   ],
   imports: [
     BrowserModule,

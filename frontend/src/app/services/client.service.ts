@@ -39,4 +39,8 @@ export class ClientService {
   findBySharedKey(sharedKey: string): Observable<Client[]> {
     return this.http.get<Client[]>(`${baseUrl}/${sharedKey}/sharedKey`);
   }
+
+  downloadCsv() {
+    return this.http.get<any>(`${baseUrl}/csv`)
+  }
 }
